@@ -40,17 +40,17 @@ def forward_backward_prop(data, labels, params, dimensions):
 
     o2 = a1.dot(W2) + b2
     p = softmax(o2)
-    cost = - np.sum(np.log(p[labels == 1])) / data.shape[0] # 1
+    cost = - np.sum(np.log(p[labels == 1])) / data.shape[0]  # 1
     # END YOUR CODE
 
     # YOUR CODE HERE: backward propagation
     do2 = (p - labels) / data.shape[0]   # N,C
-    gradW2 = a1.T.dot(do2)  #H,C
-    gradb2 = do2.sum(axis=0) #C,
+    gradW2 = a1.T.dot(do2)  # H,C
+    gradb2 = do2.sum(axis=0)  # C,
 
-    da1 = do2.dot(W2.T)  #N,H
-    do1 = sigmoid_grad(a1) * da1  #N,H
-    gradW1 = data.T.dot(do1)  #D,H
+    da1 = do2.dot(W2.T)  # N,H
+    do1 = sigmoid_grad(a1) * da1  # N,H
+    gradW1 = data.T.dot(do1)  # D,H
     gradb1 = do1.sum(axis=0)
     # END YOUR CODE
 
@@ -81,9 +81,9 @@ def sanity_check():
         dimensions[1] + 1) * dimensions[2], )
     # forward_backward_prop(data, labels, params, dimensions)
 
-
     gradcheck_naive(lambda params:
-                    forward_backward_prop(data, labels, params, dimensions), params)
+                    forward_backward_prop(data, labels, params, dimensions),
+                    params)
 
 
 def your_sanity_checks():

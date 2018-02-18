@@ -83,10 +83,9 @@ def your_sanity_checks():
     """
     print("Running your sanity checks...")
     # YOUR CODE HERE
-    raise NotImplementedError
     # END YOUR CODE
 
 
 if __name__ == "__main__":
     sanity_check()
-    # your_sanity_checks()
+    your_sanity_checks()
