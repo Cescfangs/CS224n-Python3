@@ -40,7 +40,8 @@ def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
 
     Arguments:
     predicted -- numpy ndarray, predicted word vector (\hat{v} in
-                 the written component)
+                 the written component), i.e. the center word
+                 vector(Vc).
     target -- integer, the index of the target word
     outputVectors -- "output" vectors (as rows) for all tokens
     dataset -- needed for negative sampling, unused here.
@@ -105,12 +106,11 @@ def negSamplingCostAndGradient(predicted, target, outputVectors, dataset,
     score = sigmoid(outputVectors[target].dot(predicted))
     cost = -np.log(score)
     # + (outputVectors * (1 - sigmoid(outputVectors.dot(predicted)))).sum(axis)
-    gradPred = outputVectors[target] * (score - 1)
-    grad = np.zeros_like(outputVectors)
-    grad[target] = predicted * (score - 1)
+    gradPred = outputVectors[target] * (score - 1)  # \partial{J}{Vc}
+    grad = np.zeros_like(outputVectors)  # \partial{J}{U}
+    grad[target] = predicted * (score - 1)  # \partial{J}{Ucjj}
 
     for ind in indices[1:]:
-        # ind = dataset.sampleTokenIdx()
         score = sigmoid(outputVectors[ind].dot(predicted))
         cost -= np.log(1 - score)
         grad[ind] += predicted * score
@@ -220,6 +220,7 @@ def word2vec_sgd_wrapper(word2vecModel, tokens, wordVectors, dataset, C,
 def test_word2vec():
     """ Interface to the dataset for negative sampling """
     dataset = type('dummy', (), {})()
+
     def dummySampleTokenIdx():
         return random.randint(0, 4)
 
@@ -253,9 +254,12 @@ def test_word2vec():
     print(skipgram("c", 3, ["a", "b", "e", "d", "b", "c"],
                    dummy_tokens, dummy_vectors[:5, :], dummy_vectors[5:, :], dataset))
     print(skipgram("c", 3, ["a", "b", "e", "d", "b", "c"],
-                   dummy_tokens, dummy_vectors[:5, :], dummy_vectors[5:, :], dataset, negSamplingCostAndGradient))
+                   dummy_tokens, dummy_vectors[:5,
+                                               :], dummy_vectors[5:, :], dataset,
+                   negSamplingCostAndGradient))
     print(skipgram("c", 1, ["a", "b"],
-                   dummy_tokens, dummy_vectors[:5, :], dummy_vectors[5:, :], dataset,
+                   dummy_tokens, dummy_vectors[:5,
+                                               :], dummy_vectors[5:, :], dataset,
                    negSamplingCostAndGradient))
     # print(cbow("a", 2, ["a", "b", "c", "a"],
     #            dummy_tokens, dummy_vectors[:5, :], dummy_vectors[5:, :], dataset))
