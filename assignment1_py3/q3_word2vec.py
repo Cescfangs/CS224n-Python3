@@ -149,13 +149,14 @@ def skipgram(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     gradOut = np.zeros(outputVectors.shape)
 
     # YOUR CODE HERE
-    predicted = inputVectors[tokens[currentWord]]
+    centerword_idx = tokens[currentWord]
+    predicted = inputVectors[centerword_idx]
     for context_word in contextWords:
-        target = tokens[context_word]
+        u_idx = tokens[context_word]
         cost_curr, gradPred_curr, grad_curr = word2vecCostAndGradient(
-            predicted, target, outputVectors, dataset)
+            predicted, u_idx, outputVectors, dataset)
         cost += cost_curr
-        gradIn[tokens[currentWord]] += gradPred_curr
+        gradIn[centerword_idx] += gradPred_curr
         gradOut += grad_curr
     # END YOUR CODE
 
@@ -191,6 +192,9 @@ def cbow(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
 
 def word2vec_sgd_wrapper(word2vecModel, tokens, wordVectors, dataset, C,
                          word2vecCostAndGradient=softmaxCostAndGradient):
+    '''
+    wordVectors: contain both input and output Vectors 
+    '''
     batchsize = 50
     cost = 0.0
     grad = np.zeros(wordVectors.shape)

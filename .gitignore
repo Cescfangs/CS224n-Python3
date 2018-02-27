@@ -6,3 +6,6 @@
 *.npy
 
 *.txt
+
+.vscode/*
+*.png
