@@ -8,4 +8,8 @@
 *.txt
 
 .vscode/*
+
+assingment1_py3/utils/datasets/*
+
 *.png
+assignment1_py3/utils/f.py

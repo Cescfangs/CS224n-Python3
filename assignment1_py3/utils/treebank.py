@@ -1,12 +1,10 @@
-import pickle as pickle
+# -*- coding: utf-8 -*-
 import numpy as np
-import os
 import random
-import sys
 
 
 class StanfordSentiment:
-    def __init__(self, path=None, tablesize = 1000000):
+    def __init__(self, path=None, tablesize=1000000):
         if not path:
             path = "utils/datasets/stanfordSentimentTreebank"
         self.path = path
@@ -56,9 +54,13 @@ class StanfordSentiment:
                     first = False
                     continue
 
+                # line = line.decode('latin1').encode('utf8')
                 splitted = line.strip().split()[1:]
                 # Deal with some peculiar encoding issues with this file
                 sentences += [[w.lower() for w in splitted]]
+                # sentences += [[w.lower().encode('latin1')
+                            #    for w in splitted]]
+
 
         self._sentences = sentences
         self._sentlengths = np.array([len(s) for s in sentences])
@@ -81,8 +83,8 @@ class StanfordSentiment:
         rejectProb = self.rejectProb()
         tokens = self.tokens()
         allsentences = [[w for w in s
-            if 0 >= rejectProb[tokens[w]] or random.random() >= rejectProb[tokens[w]]]
-            for s in sentences * 30]
+                         if 0 >= rejectProb[tokens[w]] or random.random() >= rejectProb[tokens[w]]]
+                        for s in sentences * 30]
 
         allsentences = [s for s in allsentences if len(s) > 1]
 
@@ -97,8 +99,8 @@ class StanfordSentiment:
         wordID = random.randint(0, len(sent) - 1)
 
         context = sent[max(0, wordID - C):wordID]
-        if wordID+1 < len(sent):
-            context += sent[wordID+1:min(len(sent), wordID + C + 1)]
+        if wordID + 1 < len(sent):
+            context += sent[wordID + 1:min(len(sent), wordID + C + 1)]
 
         centerword = sent[wordID]
         context = [w for w in context if w != centerword]
@@ -117,9 +119,11 @@ class StanfordSentiment:
         with open(self.path + "/dictionary.txt", "r") as f:
             for line in f:
                 line = line.strip()
-                if not line: continue
+                if not line:
+                    continue
                 splitted = line.split("|")
-                dictionary[splitted[0].lower()] = int(splitted[1])
+                sent = splitted[0].lower()
+                dictionary[sent] = int(splitted[1])
                 phrases += 1
         labels = [0.0] * phrases
         with open(self.path + "/sentiment_labels.txt", "r") as f:
@@ -130,7 +134,8 @@ class StanfordSentiment:
                     continue
 
                 line = line.strip()
-                if not line: continue
+                if not line:
+                    continue
                 splitted = line.split("|")
                 labels[int(splitted[0])] = float(splitted[1])
 
@@ -140,7 +145,9 @@ class StanfordSentiment:
             sentence = sentences[i]
             sentence = [word for word in sentence]
             # print(sentence)
-            full_sent = " ".join(sentence).replace('-lrb-', '(').replace('-rrb-', ')')
+            full_sent = " ".join(sentence).replace(
+                            '-lrb-', '(').replace('-rrb-', ')')
+
             sent_labels[i] = labels[dictionary[full_sent]]
 
         self._sent_labels = sent_labels

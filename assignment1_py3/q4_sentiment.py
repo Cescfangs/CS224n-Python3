@@ -46,7 +46,6 @@ def getSentenceFeatures(tokens, wordVectors, sentence):
     # Output:
     # - sentVector: feature vector for the sentence
 
-    sentVector = np.zeros((wordVectors.shape[1],))
 
     # YOUR CODE HERE
     sentence_index = [tokens[word] for word in sentence]
@@ -88,7 +87,7 @@ def chooseBestModel(results):
     bestResult = None
 
     # YOUR CODE HERE
-    raise NotImplementedError
+    bestResult = max(results, key=lambda x: x['dev'])
     # END YOUR CODE
 
     return bestResult
