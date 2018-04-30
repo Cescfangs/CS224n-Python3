@@ -23,7 +23,8 @@ class Config(object):
     hidden_size = 200
     batch_size = 1024
     n_epochs = 10
-    lr = 0.0004
+    lr = 0.001
+    reg = 0.001
 
 
 class ParserModel(Model):
@@ -59,9 +60,10 @@ class ParserModel(Model):
         self.labels_placeholder = tf.placeholder(
             tf.float32, shape=(None, self.config.n_classes))
         self.dropout_placeholder = tf.placeholder(tf.float32)
+        self.reg_placeholder = tf.placeholder(tf.float32)
         # END YOUR CODE
 
-    def create_feed_dict(self, inputs_batch, labels_batch=None, dropout=0):
+    def create_feed_dict(self, inputs_batch, labels_batch=None, dropout=0, reg=0):
         """Creates the feed_dict for the dependency parser.
 
         A feed_dict takes the form of:
@@ -91,6 +93,7 @@ class ParserModel(Model):
         if labels_batch is not None:
             feed_dict[self.labels_placeholder] = labels_batch
 
+        feed_dict[self.reg_placeholder] = reg
         feed_dict[self.dropout_placeholder] = dropout
         # END YOUR CODE
         return feed_dict
@@ -145,9 +148,9 @@ class ParserModel(Model):
         x = self.add_embedding()
         # YOUR CODE HERE
         xavier_init = xavier_weight_init()
-        W = xavier_init(
+        self.W = W = xavier_init(
             [self.config.n_features * self.config.embed_size, self.config.hidden_size])
-        U = xavier_init([self.config.hidden_size, self.config.n_classes])
+        self.U = U = xavier_init([self.config.hidden_size, self.config.n_classes])
         b1 = tf.Variable(tf.constant(0, tf.float32, [self.config.hidden_size]))
         b2 = tf.Variable(tf.constant(0, tf.float32, [self.config.n_classes]))
 
@@ -173,6 +176,7 @@ class ParserModel(Model):
         # YOUR CODE HERE
         loss = tf.nn.softmax_cross_entropy_with_logits(
             labels=self.labels_placeholder, logits=pred)
+        loss += self.reg_placeholder * (tf.nn.l2_loss(self.W) + tf.nn.l2_loss(self.U))
         loss = tf.reduce_mean(loss)
         # END YOUR CODE
         return loss
@@ -205,7 +209,7 @@ class ParserModel(Model):
 
     def train_on_batch(self, sess, inputs_batch, labels_batch):
         feed = self.create_feed_dict(inputs_batch, labels_batch=labels_batch,
-                                     dropout=self.config.dropout)
+                                     dropout=self.config.dropout, reg=self.config.reg)
         _, loss = sess.run([self.train_op, self.loss], feed_dict=feed)
         return loss
 
@@ -281,7 +285,7 @@ def main(debug=True):
             UAS, dependencies = parser.parse(test_set)
             print("- test UAS: {:.2f}".format(UAS * 100.0))
             print("Writing predictions")
-            with open('q2_test.predicted.pkl', 'w') as f:
+            with open('q2_test.predicted.pkl', 'wb') as f:
                 pickle.dump(dependencies, f, -1)
             print("Done!")
 

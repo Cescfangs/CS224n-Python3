@@ -14,5 +14,14 @@ Progress
 - Assignment 2:
   1. Tensorflow Softmax✔️
   2. Neural Transition-Based Dependency Parsing ✔️
- 
+
+  |  model   | training loss(debug) | dev UAS(debug) | training loss(full) | dev UAS(full) |
+  | :------: | :------------------: | :------------: | ------------------- | ------------- |
+  | baseline |        0.1203        |     69.97      | 0.0703              | 86.68         |
+  | + L2 reg |        0.2402        |     66.38      | 0.1212              | 85.81         |
+
+  adding L2 regularization hurts the model, for the model is simple(low capacity), regularization actually reduce the capacity of baseline model.
+
+  ​
+
   ...
