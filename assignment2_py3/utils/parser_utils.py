@@ -108,22 +108,30 @@ class Parser(object):
             stack[0] = 0
 
         def get_lc(k):
+        # get all dependent words left to k
             return sorted([arc[1] for arc in arcs if arc[0] == k and arc[1] < k])
 
         def get_rc(k):
+        # get all dependent words right to k
             return sorted([arc[1] for arc in arcs if arc[0] == k and arc[1] > k],
                           reverse=True)
 
         p_features = []
         l_features = []
+
+        # top 3 words of stack, filled by NULL if len(stack) < 3, 3 words now
         features = [self.NULL] * (3 - len(stack)) + [ex['word'][x] for x in stack[-3:]]
+        # first 3 words of buff, filled by NULL if len(buff) < 3, 6 words now
         features += [ex['word'][x] for x in buf[:3]] + [self.NULL] * (3 - len(buf))
         if self.use_pos:
+            # POS feature of above words, 12 words now
             p_features = [self.P_NULL] * (3 - len(stack)) + [ex['pos'][x] for x in stack[-3:]]
             p_features += [ex['pos'][x] for x in buf[:3]] + [self.P_NULL] * (3 - len(buf))
 
         for i in range(2):
             if i < len(stack):
+                # add 2 left/right dependent word and 1 left/right dependent word of first left/right dependent word 
+                # 6 * 2 = 12, 24 words now
                 k = stack[-i-1]
                 lc = get_lc(k)
                 rc = get_rc(k)
@@ -137,6 +145,7 @@ class Parser(object):
                 features.append(ex['word'][llc[0]] if len(llc) > 0 else self.NULL)
                 features.append(ex['word'][rrc[0]] if len(rrc) > 0 else self.NULL)
 
+                # the POS feature of above words, 36 words now 
                 if self.use_pos:
                     p_features.append(ex['pos'][lc[0]] if len(lc) > 0 else self.P_NULL)
                     p_features.append(ex['pos'][rc[0]] if len(rc) > 0 else self.P_NULL)
