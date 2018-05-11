@@ -150,7 +150,8 @@ class ParserModel(Model):
         xavier_init = xavier_weight_init()
         self.W = W = xavier_init(
             [self.config.n_features * self.config.embed_size, self.config.hidden_size])
-        self.U = U = xavier_init([self.config.hidden_size, self.config.n_classes])
+        self.U = U = xavier_init(
+            [self.config.hidden_size, self.config.n_classes])
         b1 = tf.Variable(tf.constant(0, tf.float32, [self.config.hidden_size]))
         b2 = tf.Variable(tf.constant(0, tf.float32, [self.config.n_classes]))
 
@@ -176,7 +177,8 @@ class ParserModel(Model):
         # YOUR CODE HERE
         loss = tf.nn.softmax_cross_entropy_with_logits(
             labels=self.labels_placeholder, logits=pred)
-        loss += self.reg_placeholder * (tf.nn.l2_loss(self.W) + tf.nn.l2_loss(self.U))
+        loss += self.reg_placeholder * \
+            (tf.nn.l2_loss(self.W) + tf.nn.l2_loss(self.U))
         loss = tf.reduce_mean(loss)
         # END YOUR CODE
         return loss
