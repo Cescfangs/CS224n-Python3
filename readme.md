@@ -22,6 +22,33 @@ Progress
 
   adding L2 regularization hurts the model, for the model is simple(low capacity), regularization actually reduce the capacity of baseline model.
 
-  ​
 
-  ...
+- Assignment 3:
+
+  1. A window into NER ✔️
+
+     * best score(Entity level P/R/F1): 0.85/0.87/0.86
+
+     * Token-level confusion matrix
+
+       | gold\guess | PER  | ORG  | LOC  | MISC | O     |
+       | :--------: | :--: | :--: | :--: | :--: | ----- |
+       |    PER     | 2968 |  45  |  53  |  18  | 65    |
+       |    ORG     |  92  | 1738 |  67  |  88  | 107   |
+       |    LOC     |  35  |  87  | 1931 |  16  | 25    |
+       |    MISC    |  32  |  53  |  32  | 1056 | 95    |
+       |     O      |  40  |  43  |  22  |  37  | 42617 |
+
+     * Token-level scores:
+
+       | label | acc  | prec | rec  | f1   |
+       | ----- | ---- | ---- | ---- | ---- |
+       | PER   | 0.99 | 0.94 | 0.94 | 0.94 |
+       | ORG   | 0.99 | 0.88 | 0.83 | 0.86 |
+       | LOC   | 0.99 | 0.92 | 0.92 | 0.92 |
+       | MISC  | 0.99 | 0.87 | 0.83 | 0.85 |
+       | O     | 0.99 | 0.99 | 1    | 0.99 |
+       | micro | 0.99 | 0.98 | 0.98 | 0.98 |
+       | macro | 0.99 | 0.92 | 0.9  | 0.91 |
+       | not-O | 0.99 | 0.91 | 0.89 | 0.9  |
+     ...

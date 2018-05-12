@@ -36,7 +36,7 @@ class Config:
     TODO: Fill in what n_window_features should be, using n_word_features and window_size.
     """
     n_word_features = 2  # Number of features for every word in the input.
-    window_size = 1  # The size of the window to use.
+    window_size = 2  # The size of the window to use.
     # YOUR CODE HERE
     # The total number of features used for each window.
     n_window_features = n_word_features * (1 + 2 * window_size)
@@ -45,9 +45,9 @@ class Config:
     dropout = 0.5
     embed_size = 50
     hidden_size = 200
-    batch_size = 2048
+    batch_size = 1024
     n_epochs = 10
-    lr = 0.001
+    lr = 0.0015
 
     def __init__(self, output_path=None):
         if output_path:
@@ -153,7 +153,7 @@ class WindowModel(NERModel):
             tf.float32)
         # END YOUR CODE
 
-    def create_feed_dict(self, inputs_batch, labels_batch=None, dropout=1):
+    def create_feed_dict(self, inputs_batch, labels_batch=None, dropout=0):
         """Creates the feed_dict for the model.
         A feed_dict takes the form of:
         feed_dict = {
@@ -242,7 +242,7 @@ class WindowModel(NERModel):
             'b2', [self.config.n_classes, ], initializer=tf.zeros_initializer())
         z1 = tf.matmul(x, W) + b1
         h = tf.nn.relu(z1)
-        h_drop = tf.nn.dropout(h, dropout_rate)
+        h_drop = tf.nn.dropout(h, 1 - dropout_rate)
         pred = tf.matmul(h_drop, U) + b2
         # END YOUR CODE
         return pred
@@ -480,7 +480,7 @@ input> Germany 's representative to the European Union 's veterinary committee .
             while True:
                 # Create simple REPL
                 try:
-                    sentence = raw_input("input> ")
+                    sentence = input("input> ")
                     tokens = sentence.strip().split(" ")
                     for sentence, _, predictions in model.output(session, [(tokens, ["O"] * len(tokens))]):
                         predictions = [LBLS[l] for l in predictions]
