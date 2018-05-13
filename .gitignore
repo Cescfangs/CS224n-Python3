@@ -20,3 +20,5 @@ assignment3_py3/data/*
 assignment3_py3/results/*
 
 *.png
+
+*.sh
