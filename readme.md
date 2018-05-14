@@ -1,6 +1,21 @@
-CS224n Assignments: a Python 3 repo
+# CS224n Assignments: a Python 3 repo
 
-CS22n is awesome, the original code of assignments is based on Python 2, I'm a fan of Python 3 though, for those who prefer 3 to 2, feel free to clone or fork this repo, have fun with it!
+[CS224n](http://web.stanford.edu/class/cs224n/index.html) is awesome, the original code of assignments is based on Python 2, I'm a fan of Python 3 though, for those who prefer 3 to 2, feel free to clone or fork this repo, have fun with it!
+
+**bug fix(early 2018 version)**
+
+Assignment 3:
+
+  * q1_window.py 
+    
+    WindowModel(NERModel).create_feed_dict(), the default `dropout` should be 0(i.e. `keep_prob=1` in 
+    TensorFlow by default, we would like to disable droupout when predicting). However if you treate `dropout` as `keep_prob`, then there's no trouble. 
+ 
+  * q2_rnn.py
+
+    In `RNNModel(NERModel).preprocess_sequence_data()`, should pass `window_size=self.config.window_size()` calling `featurize_windows()`, or your model will crash if you change `window_size` in `Config`.
+
+
 
 
 Progress
@@ -51,4 +66,8 @@ Progress
        | micro | 0.99 | 0.98 | 0.98 | 0.98 |
        | macro | 0.99 | 0.92 | 0.9  | 0.91 |
        | not-O | 0.99 | 0.91 | 0.89 | 0.9  |
-     ...
+  
+  2. Recurrent neural nets for NER ✔️
+  3. Grooving with GRUs (30 points) ✔️
+      * best score(Entity level) P/R/F1: 0.87/0.86/0.86
+    
